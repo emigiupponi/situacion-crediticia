@@ -1,16 +1,20 @@
-# web/app.py
-from __future__ import annotations
-
-# --- bootstrap de imports para Streamlit Cloud (agrega /src al PYTHONPATH) ---
+# --- bootstrap para que Python vea src/ en Streamlit Cloud y local ---
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]  # carpeta del repo
-SRC = ROOT / "src"
-if SRC.exists() and str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-# -----------------------------------------------------------------------------
+_here = Path(__file__).resolve()
+_root = _here.parent            # <-- empezar desde la carpeta de app.py
+SRC = None
+for _ in range(6):              # subir como mucho 5 niveles
+    cand = _root / "src"
+    if cand.exists() and cand.is_dir():
+        SRC = cand
+        break
+    _root = _root.parent
 
+if SRC is not None and str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+# --------------------------------------------------------------------
 
 import streamlit as st
 import pandas as pd
